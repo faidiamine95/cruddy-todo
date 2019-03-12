@@ -13,10 +13,13 @@ var counter = 0;
 
 const zeroPaddedNumber = (num) => {
   return sprintf('%05d', num);
+  //00000
+  //00001
 };
 
 const readCounter = (callback) => {
   fs.readFile(exports.counterFile, (err, fileData) => {
+    // .readFile synchronously reads the entire contents of a file
     if (err) {
       callback(null, 0);
     } else {
@@ -28,6 +31,7 @@ const readCounter = (callback) => {
 const writeCounter = (count, callback) => {
   var counterString = zeroPaddedNumber(count);
   fs.writeFile(exports.counterFile, counterString, (err) => {
+    //.writeFile asynchronously writes data to a file, replacing the data that already exists; if no file exists, .writeFile will create it
     if (err) {
       throw ('error writing counter');
     } else {
@@ -38,13 +42,23 @@ const writeCounter = (count, callback) => {
 
 // Public API - Fix this function //////////////////////////////////////////////
 
-exports.getNextUniqueId = () => {
-  counter = counter + 1;
-  return zeroPaddedNumber(counter);
-};
+exports.getNextUniqueId = (callback) => {
+// writeCount must be called inside the callback of readCount to avoid asynchronous function call issues  
+  readCounter(readCounterCB = (err, number) => {
+    console.log(number);
+    writeCounter((number + 1), writeCounterCB = (err, counterString) => {
+      console.log(counterString);
+      callback(null, counterString);
+    });
+  });
 
+
+};
 
 
 // Configuration -- DO NOT MODIFY //////////////////////////////////////////////
 
-exports.counterFile = path.join(__dirname, 'counter.txt');
+exports.counterFile = path.join(__dirname, 'counter.txt'); //where is filepath
+
+
+
