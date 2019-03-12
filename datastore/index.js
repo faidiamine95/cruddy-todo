@@ -45,44 +45,45 @@ exports.readAll = (callback) => {
 };
 
 exports.readOne = (id, callback) => {
-  //Read exports.dataDir for the fileName containing the id (callback)
-  //  callback success case will read the file `${id}.txt`
-  //    callback successs of readFile will use the readOne callback with the parameter {id: id, text: data}
-  // var text = items[id];
-  // if (!text) {
-  //   callback(new Error(`No item with id: ${id}`));
-  // } else {
-  //   callback(null, { id, text });
-  // }
 
   fs.readFile(`${exports.dataDir}/${id}.txt`, (err, fileContents) => {
     if (err) {
       console.log(`ERROR: ${err}`);
       callback(err);
     } else {
-      callback(null, {id: id, text: fileContents});
+      callback(null, {id, text: fileContents.toString()});
     }
-  })
-};    
+  });
+}; 
 
-//i: id string and callback funtion (err, res) => {}
-//o: will read 1 todo item from the dataDir and do something with it via callback
-//c: only read one at a time, 
-//e: 
-//justification: to read one todo item that can be returned when a GET request is made
-//explanation: the function takes the id and a callback, finds the corresponding file in _.dataDir and reads it. if it reads successfully, callback on the data
-
-
+//exports.dataDir + '/' + id + '.txt'
 
 exports.update = (id, text, callback) => {
-  var item = items[id];
-  if (!item) {
-    callback(new Error(`No item with id: ${id}`));
-  } else {
-    items[id] = text;
-    callback(null, { id, text });
-  }
-};
+//   var item = items[id];
+//   if (!item) {
+//     callback(new Error(`No item with id: ${id}`));
+//   } else {
+//     items[id] = text;
+//     callback(null, { id, text });
+//   }
+// };
+
+  fs.access(`${exports.dataDir}/${id}.txt`, fs.F_OK, (err) => {
+    if (err) {
+      console.log(`ERROR: ${err}`);
+      callback(err);
+    } else {
+      fs.writeFile(`${exports.dataDir}/${id}.txt`, text, (err) => {
+        if (err){
+          console.log(`ERROR: ${err}`);
+          callback(err);
+        } else {
+          callback(null, {id, text});
+        }  
+      });    
+    }  
+  });
+}
 
 exports.delete = (id, callback) => {
   var item = items[id];
