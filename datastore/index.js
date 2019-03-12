@@ -13,9 +13,9 @@ exports.create = (text, callback) => {
   //removed var id in order to use the counterString from getNextUniqueId
   counter.getNextUniqueId((err, id) => {
     //will get the counterString from the counter.js file
-    fs.writeFile(path.join(__dirname, '../test/testData', `${id}.txt`), text, (err, res) => {
+    fs.writeFile(path.join(exports.dataDir, `${id}.txt`), text, (err, res) => {
       //created the file in the testData directory in order to pass tests
-      if(err) {
+      if (err) {
         console.log (`ERROR: ${err}`);
         callback(err); // so that the callback knows not to run with 'null' as the err argument
       } else {
@@ -32,22 +32,22 @@ exports.readAll = (callback) => {
   // var data = _.map(items, (text, id) => {
   //   return { id, text };
   // });
-  fs.readdir('./test/testData', (err, data) => {
+  fs.readdir(exports.dataDir, (err, data) => {
     if (err) {
       console.log(`ERROR: ${err}`);
       callback(err);
     } else {
-      var removeTxt = _.map(data, (fileName) => {fileName = str.slice(5, 4);})
-      var mappedData = _.map(removeTxt, (value) => ({id: value, text: value}));
+      var mappedData = _.map(data, (value) => ({id: value.slice(0, 5), text: value.slice(0, 5)}));
+      console.log(mappedData);
       callback(null, mappedData);
     }
-  })
+  });
   
 
   // i: callback function
   // o: array of todos (that we'll send to the client via GET request)
   // c: do not attempt to read the contents of each file that contains todo item text- DON'T DO IT!
-    // must include a text field in your response to the client, use the message's id for both the id field and the text field 
+  //  must include a text field in your response to the client, use the message's id for both the id field and the text field 
   // e: no todos should return an empty array
 
   //justification: to create a route to the collection of todos. Create a way to access all todos
@@ -55,7 +55,7 @@ exports.readAll = (callback) => {
 
   //pseudo code
   //  1. use fs.readdir to access the contents of the directory and put them into an array
-      // console.log the data to see what it looks like
+  //  console.log the data to see what it looks like
   //  2. map over the list, and create an object where id and text are both set equal to the file name string
   //regex to remove .txt from the key, value pairs
 
@@ -102,15 +102,3 @@ exports.initialize = () => {
   }
 };
 
-fs.readdir('./test/testData', (err, data) => {
-  if (err) {
-    console.log(`ERROR: ${err}`);
-    // callback(err);
-  } else {
-    var removeTxt = _.map(data, (fileName) => {return fileName.slice(0, 5);});
-    console.log(removeTxt);
-    // var mappedData = _.map(data, (value) => ({id: value, text: value}));
-    // callback(null, mappedData);
-    // console.log(mappedData);
-  }
-})
