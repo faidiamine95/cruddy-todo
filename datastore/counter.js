@@ -58,7 +58,7 @@ exports.getNextUniqueId = (callback) => {
 
 // Configuration -- DO NOT MODIFY //////////////////////////////////////////////
 
-exports.counterFile = path.join(__dirname, 'counter.txt'); //where is filepath
+exports.counterFile = path.join(__dirname, 'counter.txt'); //creates file path
 
 
 
