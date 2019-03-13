@@ -45,9 +45,7 @@ const writeCounter = (count, callback) => {
 exports.getNextUniqueId = (callback) => {
 // writeCount must be called inside the callback of readCount to avoid asynchronous function call issues  
   readCounter(readCounterCB = (err, number) => {
-    console.log(number);
     writeCounter((number + 1), writeCounterCB = (err, counterString) => {
-      console.log(counterString);
       callback(null, counterString);
     });
   });

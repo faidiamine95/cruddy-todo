@@ -16,10 +16,8 @@ exports.create = (text, callback) => {
     fs.writeFile(path.join(exports.dataDir, `${id}.txt`), text, (err, res) => {
       //created the file in the testData directory in order to pass tests
       if (err) {
-        console.log (`ERROR: ${err}`);
         callback(err); // so that the callback knows not to run with 'null' as the err argument
       } else {
-        console.log('File was created successfully');
         items[id] = text; // adds the key/value pair to the items object at the top of this file
         callback(null, { id, text }); //runs the callback with an object containing the id and text as the response argument
       }
@@ -34,7 +32,6 @@ exports.readAll = (callback) => {
   // });
   fs.readdir(exports.dataDir, (err, data) => {
     if (err) {
-      console.log(`ERROR: ${err}`);
       callback(err);
     } else {
       var mappedData = _.map(data, (value) => ({id: value.slice(0, 5), text: value.slice(0, 5)}));
@@ -48,7 +45,6 @@ exports.readOne = (id, callback) => {
 
   fs.readFile(`${exports.dataDir}/${id}.txt`, (err, fileContents) => {
     if (err) {
-      console.log(`ERROR: ${err}`);
       callback(err);
     } else {
       callback(null, {id, text: fileContents.toString()});
@@ -70,12 +66,10 @@ exports.update = (id, text, callback) => {
 
   fs.access(`${exports.dataDir}/${id}.txt`, fs.F_OK, (err) => {
     if (err) {
-      console.log(`ERROR: ${err}`);
       callback(err);
     } else {
       fs.writeFile(`${exports.dataDir}/${id}.txt`, text, (err) => {
-        if (err){
-          console.log(`ERROR: ${err}`);
+        if (err) {
           callback(err);
         } else {
           callback(null, {id, text});
@@ -83,18 +77,40 @@ exports.update = (id, text, callback) => {
       });    
     }  
   });
-}
+};
 
 exports.delete = (id, callback) => {
-  var item = items[id];
-  delete items[id];
-  if (!item) {
-    // report an error if item not found
-    callback(new Error(`No item with id: ${id}`));
-  } else {
-    callback();
-  }
-};
+  // var item = items[id];
+  // delete items[id];
+  // if (!item) {
+  //   // report an error if item not found
+  //   callback(new Error(`No item with id: ${id}`));
+  // } else {
+  //   callback();
+  // }
+  fs.access(`${exports.dataDir}/${id}.txt`, fs.F_OK, (err) => {
+
+    if (err) {
+      callback(err);
+      return;
+    }
+
+    fs.unlink(`${exports.dataDir}/${id}.txt`, (err) => {
+      if (err) {
+        callback(err);
+      }
+      callback();
+    });
+  });
+}
+//i: id, callback
+//o: no output, abscence of input id file- should delete todo
+//c:
+//e:
+
+// use fs.unlink to delete file
+
+
 
 // Config+Initialization code -- DO NOT MODIFY /////////////////////////////////
 
